@@ -7,12 +7,69 @@
   font-weight: normal;
 }
 
+header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+img {
+  display: block;
+  margin: auto;
+  margin-bottom: 1rem;
+}
+
 a,
 .green {
   text-decoration: none;
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
   padding: 3px;
+}
+
+.fullwidth {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+input[type="text"],
+button {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border-radius: 8px;
+    border: 1px solid var(--color-accent);
+    padding: 10px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+/* Hover- and Focus effects on input */
+input[type="text"]:hover,
+input[type="text"]:focus {
+    background-color: var(--color-background-soft);
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Style for the button */
+button {
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Hover- and Focus effects */
+button:hover,
+button:focus {
+    background-color: var(--color-background-soft);
+    box-shadow: 0 0 10px rgba(0, 91, 179, 0.5);
+}
+
+/* Optional: Disabled state */
+button:disabled {
+    background-color: var(--color-background-mute);
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 @media (hover: hover) {
@@ -28,8 +85,6 @@ a,
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
 }

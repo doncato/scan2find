@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
-
 <template>
   <main>
    <div>
@@ -10,12 +6,14 @@ import TheWelcome from '../components/TheWelcome.vue'
         v-model="textFields[index]"
         @input="validateInput(index)"
         type="text"
-        placeholder="Geben Sie Ihren Text ein"
+        placeholder="Enter Search Term"
+        autofocus
       />
-      <button @click="addField">+</button>
+      <button v-if="index+1 == textFields.length" @click="addField">+</button>
+      <button v-if="index+1 != textFields.length" @click="delField(index)">-</button>
     </div>
 
-    <button @click="goToNextPage" :disabled="!isFormValid">Go</button>
+    <button @click="goToFindPage" :disabled="!isFormValid">Go</button>
   </div>
   </main>
 </template>
@@ -38,27 +36,18 @@ export default defineComponent({
     addField(): void {
       this.textFields.push('');
     },
+    delField(i: number): void {
+      this.textFields.splice(i, 1);
+    },
     validateInput(index: number): void {
-      if (!/^[a-zA-Z0-9]*$/.test(this.textFields[index])) {
+      if (!/^[a-zA-Z0-9 ;\-\{\}\(\)]*$/.test(this.textFields[index])) {
         this.textFields[index] = this.textFields[index].slice(0, -1);
       }
     },
-    goToNextPage(): void {
+    goToFindPage(): void {
       const queryString = this.textFields.map(encodeURIComponent).join(',');
-      this.$router.push({ name: 'NextPage', query: { strings: queryString } });
+      this.$router.push({ name: 'Find', query: { strings: queryString } });
     }
   }
 });
 </script>
-
-<style>
-.field {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-button {
-  margin-left: 8px;
-}
-</style>

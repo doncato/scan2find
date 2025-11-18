@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import FindView from '../views/FindView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,11 +10,11 @@ const router = createRouter({
       name: 'Home',
       component: HomeView,
     },
-    // {
-    //   path: '/find',
-    //   name: 'Find',
-    //   component: FindView,
-    // },
+    {
+      path: '/find',
+      name: 'Find',
+      component: FindView,
+    },
     {
       path: '/about',
       name: 'about',
