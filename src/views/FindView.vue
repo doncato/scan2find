@@ -23,7 +23,7 @@ export default defineComponent({
     searchStrings(): Record {
       const strings = this.$route.query.strings as string;
       if (strings) {
-        let strarr = strings.split(',').map(decodeURIComponent).filter(n => n !== "") as string[];
+        let strarr = strings.split(';').map(decodeURIComponent).filter(n => n !== "") as string[];
         return ref(strarr
           .reduce((acc, curr) => {
             acc[curr] = { matches: false };
@@ -44,9 +44,17 @@ export default defineComponent({
       this.$router.push({ name: 'Home' });
     },
     actFound(value: Record, index: number): void {
-      value["matches"] = true;
-      var audio = new Audio("public/trigger-sound.wav");
-      audio.play();
+      const old_value = structuredClone(value["matches"]);
+      value["matches"] = index >= 0;
+
+      if (index < 0) {
+        return;
+      }
+
+      if (old_value !== value["matches"]) {
+        var audio = new Audio("public/trigger-sound.wav");
+        audio.play();
+      }
       if (!this.sticky) {
         this.inputSequence = this.inputSequence.slice(0, index) + this.inputSequence.slice(index+1);
       }
@@ -71,11 +79,8 @@ export default defineComponent({
         if (!this.caseSensitive) {
           key = key.toLowerCase();
         }
-        let indx =this.inputSequence.search(key);
-        value["matches"] = indx >= 0;
-        if (indx >= 0) {
-          this.actFound(value, indx);
-        }
+        var indx =this.inputSequence.search(key);
+        this.actFound(value, indx);
       }
 
       if (this.inputSequence.length > 255) {
