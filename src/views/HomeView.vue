@@ -5,15 +5,34 @@
       <input
         v-model="textFields[index]"
         @input="validateInput(index)"
+        @keydown.enter="addField"
+        ref="inputFields"
         type="text"
         placeholder="Enter Search Term"
-        autofocus
+        :autofocus="index == 0"
       />
       <button v-if="index+1 == textFields.length" @click="addField">+</button>
       <button v-if="index+1 != textFields.length" @click="delField(index)">-</button>
     </div>
-
-    <button @click="goToFindPage" :disabled="!isFormValid">Go</button>
+    <div class="field">
+      <input
+        v-model="case"
+        type="checkbox"
+        id="case"
+        value="case"
+      />
+      <label for="case">Case Sensitive?</label>
+    </div>
+    <div class="field">
+      <input
+        v-model="sticky"
+        type="checkbox"
+        id="sticky"
+        value="sticky"
+      />
+      <label for="sticky">Make result sticky?</label>
+    </div>
+    <button @click="goToFindPage" :disabled="!isFormValid" class="fullwidth">Go</button>
   </div>
   </main>
 </template>
@@ -24,7 +43,9 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   data() {
     return {
-      textFields: [''] as string[]
+      textFields: [''] as string[],
+      case: false as bool,
+      sticky: false as bool
     };
   },
   computed: {
@@ -35,6 +56,11 @@ export default defineComponent({
   methods: {
     addField(): void {
       this.textFields.push('');
+      this.$nextTick(() => {
+        const inputRefs = this.$refs.inputFields as HTMLInputElement[];
+        console.log(inputRefs);
+        inputRefs[inputRefs.length - 1].focus({"focusVisible": true});
+      });
     },
     delField(i: number): void {
       this.textFields.splice(i, 1);
@@ -46,7 +72,7 @@ export default defineComponent({
     },
     goToFindPage(): void {
       const queryString = this.textFields.map(encodeURIComponent).join(',');
-      this.$router.push({ name: 'Find', query: { strings: queryString } });
+      this.$router.push({ name: 'Find', query: { strings: queryString, case: this.case, sticky: this.sticky } });
     }
   }
 });

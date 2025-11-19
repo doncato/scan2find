@@ -8,7 +8,7 @@
 }
 
 header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
@@ -72,8 +72,21 @@ button:disabled {
     box-shadow: none;
 }
 
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.search {
+    font-size: 2em;
+}
+
 .found {
-    color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.light {
+  color: var(--color-secondary);
 }
 
 @media (hover: hover) {

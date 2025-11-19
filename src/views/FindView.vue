@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h1>Finding...</h1>
-    <p>Simply type to search. Searching for:</p>
     <ul>
-      <li v-for="(value, key) in searchStrings.value" :class="{ found: value.matches }" :key="key">{{ key }}</li>
+      <li v-for="(value, key) in searchStrings.value" :class="{ found: value.matches }" :key="key" class="search">{{ key }}</li>
     </ul>
+    <hr/>
     <button @click="goToHomePage">Go Back</button>
     <button @click="resetState">Reset</button>
+    <p class="light">Simply type to search.</p>
   </div>
 </template>
 
@@ -23,11 +23,9 @@ export default defineComponent({
     searchStrings(): Record {
       const strings = this.$route.query.strings as string;
       if (strings) {
-        let strarr = strings.split(',').map(decodeURIComponent) as string[];
-        console.log(strarr);
+        let strarr = strings.split(',').map(decodeURIComponent).filter(n => n !== "") as string[];
         return ref(strarr
           .reduce((acc, curr) => {
-            console.log(curr)
             acc[curr] = { matches: false };
             return acc;
           }, {} as Record));
@@ -35,18 +33,18 @@ export default defineComponent({
       return [];
     },
     caseSensitive(): bool {
-      return this.$route.query.case as bool;
+      return this.$route.query.case == 'true';
     },
     sticky(): bool{
-      return this.$route.query.sticky as bool;
+      return this.$route.query.sticky == 'true';
     }
   },
   methods: {
     goToHomePage(): void {
       this.$router.push({ name: 'Home' });
     },
-    actFound(key: string, index: number): void {
-      this.searchStrings.value[key]["matches"] = true;
+    actFound(value: Record, index: number): void {
+      value["matches"] = true;
       var audio = new Audio("public/trigger-sound.wav");
       audio.play();
       if (!this.sticky) {
@@ -60,6 +58,9 @@ export default defineComponent({
       this.inputSequence = "";
     },
     handleKeyPress(event: KeyboardEvent): void {
+      if (event.key == "Enter") {
+        return;
+      }
       if (this.caseSensitive) {
         this.inputSequence += event.key;
       } else {
@@ -67,10 +68,13 @@ export default defineComponent({
       }
 
       for (var [key, value] of Object.entries(this.searchStrings.value)) {
+        if (!this.caseSensitive) {
+          key = key.toLowerCase();
+        }
         let indx =this.inputSequence.search(key);
         value["matches"] = indx >= 0;
         if (indx >= 0) {
-          this.actFound(key, indx);
+          this.actFound(value, indx);
         }
       }
 
