@@ -59,7 +59,7 @@ export default defineComponent({
       }
 
       if (old_value !== this.searchStrings[key]?.matches) {
-        var audio = new Audio("public/trigger-sound.wav");
+        var audio = new Audio("/trigger-sound.wav");
         audio.play();
       }
       if (!this.sticky) {
