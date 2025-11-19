@@ -20,6 +20,7 @@
         type="checkbox"
         id="case"
         value="case"
+        class="checkbox"
       />
       <label for="case">Case Sensitive?</label>
     </div>
@@ -29,6 +30,7 @@
         type="checkbox"
         id="sticky"
         value="sticky"
+        class="checkbox"
       />
       <label for="sticky">Make result sticky?</label>
     </div>

@@ -89,6 +89,10 @@ hr {
   color: var(--color-secondary);
 }
 
+.checkbox {
+  margin-right: 1em;
+}
+
 @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
