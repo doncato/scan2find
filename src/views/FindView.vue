@@ -1,7 +1,8 @@
 <template>
   <div>
+    <p>{{ searchStrings }}</p>
     <ul>
-      <li v-for="(value, key) in searchStrings.value" :class="{ found: value.matches }" :key="key" class="search">{{ key }}</li>
+      <li v-for="(value, key) in searchStrings" :class="{ found: value.matches }" :key="key" class="search">{{ key }}</li>
     </ul>
     <hr/>
     <button @click="goToHomePage">Go Back</button>
@@ -13,6 +14,12 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 
+interface SearchString {
+  [key: string]: {
+    matches: boolean
+  };
+}
+
 export default defineComponent({
   data() {
     return {
@@ -20,22 +27,22 @@ export default defineComponent({
     };
   },
   computed: {
-    searchStrings(): Record {
+    searchStrings(): SearchString {
       const strings = this.$route.query.strings as string;
       if (strings) {
         let strarr = strings.split(';').map(decodeURIComponent).filter(n => n !== "") as string[];
-        return ref(strarr
+        return strarr
           .reduce((acc, curr) => {
-            acc[curr] = { matches: false };
+            acc[curr] = {matches: false};
             return acc;
-          }, {} as Record));
+          }, {} as SearchString);
       }
-      return [];
+      return {} as SearchString;
     },
-    caseSensitive(): bool {
+    caseSensitive(): boolean {
       return this.$route.query.case == 'true';
     },
-    sticky(): bool{
+    sticky(): boolean {
       return this.$route.query.sticky == 'true';
     }
   },
@@ -43,15 +50,17 @@ export default defineComponent({
     goToHomePage(): void {
       this.$router.push({ name: 'Home' });
     },
-    actFound(value: Record, index: number): void {
-      const old_value = structuredClone(value["matches"]);
-      value["matches"] = index >= 0;
+    actFound(key: string, soup: SearchString, index: number): void {
+      const old_value = structuredClone(soup[key]?.matches ?? false);
+      if (soup[key]) {
+        soup[key].matches = index >= 0;
+      }
 
       if (index < 0) {
         return;
       }
 
-      if (old_value !== value["matches"]) {
+      if (old_value !== soup[key]?.matches) {
         var audio = new Audio("public/trigger-sound.wav");
         audio.play();
       }
@@ -60,8 +69,10 @@ export default defineComponent({
       }
     },
     resetState(): void {
-      for (var [key, value] of Object.entries(this.searchStrings.value)) {
-        value["matches"] = false;
+      for (let key in this.searchStrings) {
+        if (this.searchStrings[key]) {
+          this.searchStrings[key].matches = false;
+        }
       }
       this.inputSequence = "";
     },
@@ -75,12 +86,13 @@ export default defineComponent({
         this.inputSequence += event.key.toLowerCase();
       }
 
-      for (var [key, value] of Object.entries(this.searchStrings.value)) {
+      for (let key in this.searchStrings) {
+        var value = this.searchStrings[key] ?? {};
         if (!this.caseSensitive) {
           key = key.toLowerCase();
         }
         var indx =this.inputSequence.search(key);
-        this.actFound(value, indx);
+        this.actFound(key, value, indx);
       }
 
       if (this.inputSequence.length > 255) {

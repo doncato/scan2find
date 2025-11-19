@@ -46,8 +46,8 @@ export default defineComponent({
   data() {
     return {
       textFields: [''] as string[],
-      case: false as bool,
-      sticky: false as bool
+      case: false as boolean,
+      sticky: false as boolean
     };
   },
   computed: {
@@ -60,21 +60,20 @@ export default defineComponent({
       this.textFields.push('');
       this.$nextTick(() => {
         const inputRefs = this.$refs.inputFields as HTMLInputElement[];
-        console.log(inputRefs);
-        inputRefs[inputRefs.length - 1].focus({"focusVisible": true});
+        inputRefs[inputRefs.length - 1]?.focus();
       });
     },
     delField(i: number): void {
       this.textFields.splice(i, 1);
     },
     validateInput(index: number): void {
-      if (!/^[a-zA-Z0-9 \"\:\,\-\{\}\(\)]*$/.test(this.textFields[index])) {
-        this.textFields[index] = this.textFields[index].slice(0, -1);
+      if (!/^[a-zA-Z0-9 \"\:\,\-\{\}\(\)]*$/.test(this.textFields[index] ?? "")) {
+        this.textFields[index] = this.textFields[index]?.slice(0, -1) ?? "";
       }
     },
     goToFindPage(): void {
       const queryString = this.textFields.map(encodeURIComponent).join(';');
-      this.$router.push({ name: 'Find', query: { strings: queryString, case: this.case, sticky: this.sticky } });
+      this.$router.push({ name: 'Find', query: { strings: queryString, case: this.case.toString(), sticky: this.sticky.toString() } });
     }
   }
 });
